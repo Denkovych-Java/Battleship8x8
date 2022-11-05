@@ -29,6 +29,12 @@
             <version>9.0.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-shared-utils</artifactId>
+            <version>3.3.3</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

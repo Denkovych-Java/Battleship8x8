@@ -1,5 +1,9 @@
 package com.epam.rd.autotasks;
 
+import org.apache.maven.shared.utils.StringUtils;
+
+import java.util.Objects;
+
 import static java.lang.Integer.parseInt;
 
 public class Battleship8x8 {
@@ -9,7 +13,92 @@ public class Battleship8x8 {
     public Battleship8x8(final long ships) {
         this.ships = ships;
     }
+    private String[][] changeToSquare(String arr){
+        String[] binaryMap = arr.split("",64);
+        String[][] temp = new String[8][8];
+        int counter = 0;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                temp[i][j] = binaryMap[counter++];
+            }
+        }
+        return temp;
+    }
+    private String[] changeToNormal(String[][] arr){
+        String[] temp = new String[64];
+        int counter = 0;
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                temp[counter++]=arr[i][j];
+            }
+        }
+        return temp;
+    }
+    private String[][] changeToBinary(long value){
+        String maps = Long.toBinaryString(value);
+        return changeToSquare(maps);
+    }
+    private void addLong(String[][] arr,int x,int y){
+        String[][] temp1;
+        if (shots == 0L)  {
+            temp1 = arr;
+        }
+       else {
+            temp1 = changeToBinary(shots);
+        }
+        temp1[x][y] = "1";
+        shots = Long.parseUnsignedLong(StringUtils.join(changeToNormal(temp1), ""), 2);
+    }
 
+    public boolean shoot(String shot) {
+
+        String[] sp = shot.split("", 2);
+        int x = parseInt(sp[1]) - 1;
+        int y = Coordinate.valueOf(sp[0]).getCoordinate();
+        String[][] before = changeToBinary(ships);
+        String shooting = "0000000000000000000000000000000000000000000000000000000000000000";
+        String[][] after = changeToSquare(shooting);
+        after[x][y] = "1";
+        addLong(after,x,y);
+        return Objects.equals(after[x][y], before[x][y]);
+    }
+    public String state() {
+      String[][] mapsArr = changeToBinary(ships);
+      String[][] shotsArr = changeToBinary(shots);
+      String[][] temp = new String[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (mapsArr[i][j].equals("1")&&shotsArr[i][j].equals("1")) temp[i][j] = "☒";
+                else if (mapsArr[i][j].equals("1")&&shotsArr[i][j].equals("0")) temp[i][j] = "☐";
+                else if (mapsArr[i][j].equals("0")&&shotsArr[i][j].equals("1")) temp[i][j] = "×";
+                else if (mapsArr[i][j].equals("0")&&shotsArr[i][j].equals("0")) temp[i][j] = ".";
+            }
+        }
+        return StringUtils.join((temp),"");
+    }
+    public enum Coordinate {
+        A(0), B(1), C(2), D(3), E(4), F(5), G(6), H(7);
+        private final int coordinate;
+
+        Coordinate(int coordinate) {
+            this.coordinate = coordinate;
+        }
+
+        public int getCoordinate() {
+            return coordinate;
+        }
+    }
+
+    public static void main(String[] args) {
+        long map = 0b11110000_00000111_00000000_00110000_00000010_01000000_00000000_00000000L;
+        Battleship8x8 battle = new Battleship8x8(map);
+        System.out.println(battle.shoot("A1"));
+        System.out.println(battle.shoot("B1"));
+        System.out.println(battle.state());
+    }
+}
+
+    /*
     public boolean shoot(String shot) {
         String map = Long.toBinaryString(ships);
         String[] temp = map.split("", 64);
@@ -104,4 +193,4 @@ public class Battleship8x8 {
         battle.shoot("A1");
         battle.state();
     }
-}
+} */
