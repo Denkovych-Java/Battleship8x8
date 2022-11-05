@@ -74,7 +74,15 @@ public class Battleship8x8 {
                 else if (mapsArr[i][j].equals("0")&&shotsArr[i][j].equals("0")) temp[i][j] = ".";
             }
         }
-        return StringUtils.join((temp),"");
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                res.append(temp[i][j]);
+            }
+            res.append("\n");
+        }
+        return String.valueOf(res);
+//        return StringUtils.join((temp),"");
     }
     public enum Coordinate {
         A(0), B(1), C(2), D(3), E(4), F(5), G(6), H(7);
