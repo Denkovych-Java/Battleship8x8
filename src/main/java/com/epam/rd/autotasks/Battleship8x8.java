@@ -36,7 +36,15 @@ public class Battleship8x8 {
     }
     private String[][] changeToBinary(long value){
         String maps = Long.toBinaryString(value);
-        return changeToSquare(maps);
+        String[] str2 = maps.split("");
+        String[] temp = new String[64];
+        System.arraycopy(str2,0,temp,temp.length - str2.length,str2.length);
+        for (int i = 0; i < 64; i++) {
+            if (temp[i]==null) temp[i]="0";
+        }
+        String ar = StringUtils.join(temp, "");
+        return changeToSquare(ar);
+
     }
     private void addLong(String[][] arr,int x,int y){
         String[][] temp1;
@@ -47,7 +55,8 @@ public class Battleship8x8 {
             temp1 = changeToBinary(shots);
         }
         temp1[x][y] = "1";
-        shots = Long.parseUnsignedLong(StringUtils.join(changeToNormal(temp1), ""), 2);
+       String[] temp = changeToNormal(temp1);
+        shots = Long.parseUnsignedLong(StringUtils.join(temp, ""), 2);
     }
 
     public boolean shoot(String shot) {
@@ -58,6 +67,7 @@ public class Battleship8x8 {
         String[][] before = changeToBinary(ships);
         String shooting = "0000000000000000000000000000000000000000000000000000000000000000";
         String[][] after = changeToSquare(shooting);
+//          String[][] after = new String[8][8];
         after[x][y] = "1";
         addLong(after,x,y);
         return Objects.equals(after[x][y], before[x][y]);
@@ -100,105 +110,16 @@ public class Battleship8x8 {
     public static void main(String[] args) {
         long map = 0b11110000_00000111_00000000_00110000_00000010_01000000_00000000_00000000L;
         Battleship8x8 battle = new Battleship8x8(map);
+
         System.out.println(battle.shoot("A1"));
-        System.out.println(battle.shoot("B1"));
+        System.out.println(battle.shoot("B2"));
+        System.out.println(battle.shoot("C3"));
+        System.out.println(battle.shoot("D4"));
+        System.out.println(battle.shoot("E5"));
+        System.out.println(battle.shoot("F6"));
+        System.out.println(battle.shoot("G7"));
+
+
         System.out.println(battle.state());
     }
 }
-
-    /*
-    public boolean shoot(String shot) {
-        String map = Long.toBinaryString(ships);
-        String[] temp = map.split("", 64);
-        String[][] maps = new String[8][8];
-        int counter = 0;
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                maps[i][j] = temp[counter++];
-            }
-        }
-        String[] sp = shot.split("", 2);
-        int cr1 = parseInt(sp[1]) - 1;
-        int cr2 = Coordinate.valueOf(sp[0]).getCoordinate();
-        StringBuilder binaryMap = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if ((i == cr1) && (j == cr2)) binaryMap.append("1");
-                else binaryMap.append("0");
-            }
-        }
-        shots = Long.parseUnsignedLong(binaryMap.toString(), 2);
-        mapa();
-        return maps[cr1][cr2].equals("1");
-    }
-    public String[] invert(String[] arr){
-        for (int i = 0; i < arr.length / 2 ; i++) {
-            Object temp = arr[i];
-            arr[i] = arr[arr.length-1-i];
-            arr[arr.length-1-i] = (String) temp;
-        }
-        return arr;
-    }
-    public String[] mapa(){
-        String map1 = Long.toBinaryString(ships);
-        String[] temp1 = map1.split("", 64);
-        String map2 = Long.toBinaryString(shots);
-        String[] temp2 = new String[64];
-        String[] temp3 = map2.split("");
-        String[] temp4 = invert(temp3);
-        for (int i = 0; i < temp4.length; i++) {
-            temp2[i] = temp4[i];
-        }
-        for (int i = 0; i < 64; i++) {
-            if(temp2[i] == null) temp2[i] = "0";
-        }
-        String[] good = invert(temp2);
-        String[] tempMaps = new String[64];
-        for (int i = 0; i < 64; i++) {
-            if ((temp1[i].equals("1")) && (good[i].equals("1"))) tempMaps[i] = "☒";
-            else if ((temp1[i].equals("1")) && (good[i].equals("0"))) tempMaps[i] = "☐";
-            else if ((temp1[i].equals("0")) && (good[i].equals("1"))) tempMaps[i] = "×";
-            else if ((temp1[i].equals("0")) && (good[i].equals("0"))) tempMaps[i] = ".";
-        }
-        return tempMaps;
-    }
-
-    public void state() {
-        String[] tempMaps = mapa();
-        int count = 0;
-        String[][] map = new String[8][8];
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                map[i][j] = tempMaps[count++];
-            }
-        }
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                System.out.print(map[i][j]);
-            }
-            System.out.println();
-        }
-    }
-
-    public enum Coordinate {
-        A(0), B(1), C(2), D(3), E(4), F(5), G(6), H(7);
-        private final int coordinate;
-
-        Coordinate(int coordinate) {
-            this.coordinate = coordinate;
-        }
-
-        public int getCoordinate() {
-            return coordinate;
-        }
-    }
-
-    public static void main(String[] args) {
-        long map = 0b11110000_00000111_00000000_00110000_00000010_01000000_00000000_00000000L;
-        Battleship8x8 battle = new Battleship8x8(map);
-        battle.shoot("B1");
-        battle.shoot("A1");
-        battle.state();
-    }
-} */
